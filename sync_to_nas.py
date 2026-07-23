@@ -14,7 +14,7 @@ import re
 import subprocess
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
-from urllib.request import urlretrieve, urlopen
+from urllib.request import urlretrieve, urlopen, Request
 from urllib.parse import quote
 from email.utils import formatdate, parsedate_to_datetime
 
@@ -308,6 +308,44 @@ function togglePlayback(titleEl) {{
 """
 
 
+def verify_feed(rss_local_path, entries):
+    """Basic post-publish health check: is the feed we just wrote well-formed,
+    does it contain every episode we meant to publish, and is each audio file
+    actually reachable on the NAS (not just referenced)? Prints a clear
+    OK/problem report instead of silently trusting that everything worked."""
+    problems = []
+
+    try:
+        with open(rss_local_path, "rb") as f:
+            root = ET.fromstring(f.read())
+    except ET.ParseError as e:
+        print(f"HEALTH CHECK FAILED: feed XML is not well-formed: {e}")
+        return False
+
+    items = root.findall(".//item")
+    if len(items) != len(entries):
+        problems.append(f"expected {len(entries)} items, found {len(items)} in the feed")
+
+    for e in entries:
+        url = f"{PUBLIC_BASE_URL}/{quote(e['filename'])}"
+        try:
+            with urlopen(Request(url, method="HEAD"), timeout=15) as r:
+                size = int(r.headers.get("Content-Length", 0))
+                if size <= 0:
+                    problems.append(f"{e['filename']}: reachable but reports 0 bytes")
+        except Exception as ex:
+            problems.append(f"{e['filename']}: not reachable ({ex})")
+
+    if problems:
+        print("HEALTH CHECK: problems found:")
+        for p in problems:
+            print(f"  - {p}")
+        return False
+
+    print(f"HEALTH CHECK OK: {len(entries)} episode(s) verified reachable on the NAS.")
+    return True
+
+
 def main():
     root = fetch_feed()
     channel = root.find("channel")
@@ -381,6 +419,9 @@ def main():
     with open(html_local, "w", encoding="utf-8") as f:
         f.write(html)
     scp_to_nas(html_local, "index.html")
+
+    print()
+    verify_feed(rss_local, entries)
 
     print(f"\nDone. {len(entries)} episodes published.")
     print("RSS feed (add this to your podcast app):")

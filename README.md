@@ -158,7 +158,7 @@ have to rediscover them:
 | `docker-compose.cpu.yml` | MinusPod, CPU-only |
 | `.env.example` | Copy to `.env` and fill in |
 | `merge_multipart.py` | Merges `[N/M]`-titled multi-part episodes |
-| `sync_to_nas.py` | Uploads to the NAS, generates the RSS feed + web player |
+| `sync_to_nas.py` | Uploads to the NAS, generates the RSS feed + web player, then runs a basic post-publish health check (feed is well-formed, every episode is present, every audio file is actually reachable on the NAS) |
 | `podcasts-api/server.py` | Optional: cross-device playback position/completed sync |
 | `nightly_start.ps1` / `nightly_sync.ps1` | Windows Task Scheduler example (23:00 refresh, 04:00 merge+sync) |
 
