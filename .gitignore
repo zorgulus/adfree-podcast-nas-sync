@@ -1,0 +1,7 @@
+.env
+nightly.log
+data/
+merged/
+singles/
+*.xml
+*.html
