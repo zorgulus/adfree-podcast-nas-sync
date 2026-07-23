@@ -75,12 +75,18 @@ consolidating everything onto it is a perfectly reasonable simplification.
 
 ### New to Docker/NAS setups? Use Claude Code
 
-If you're not comfortable with Docker, SSH, or editing `.env` files by hand,
-you can point [Claude Code](https://claude.com/claude-code) at this repo and
-ask it to walk you through the setup on your own machine and NAS - reading
-the `.env.example` comments, wiring up the reverse proxy, and debugging
-whatever your specific NAS's quirks turn out to be. This project was in fact
-built and iterated on entirely that way.
+The steps above assume you're already comfortable with Docker, a reverse
+proxy, and scheduling a recurring task - realistically, that's not "beginner"
+territory. If that's not you, the practical shortcut is: install
+[Claude Code](https://claude.com/claude-code) on your processing machine, and
+set it up with SSH access to your NAS. At that point you're not just asking
+it questions - it can actually do the setup itself: install Docker if it's
+missing, write the NAS's reverse-proxy config, wire up the scheduled task or
+cron job, and debug whatever goes wrong along the way (a stuck container, a
+wrong file permission, a port conflict with something else already running).
+This project itself was built and debugged entirely that way - every `docker
+compose`, SSH command, and nginx config change in its history was Claude Code
+doing the actual work, not just explaining it.
 
 ## Choosing an LLM
 
