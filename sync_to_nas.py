@@ -400,11 +400,15 @@ def main():
             continue
         safe_name = re.sub(r"[^\w\-]+", "_", title).strip("_")[:100] + ".mp3"
         local_path = os.path.join(SINGLES_DIR, safe_name)
-        if not os.path.exists(local_path):
-            print(f"Downloading (single) {title}...")
-            urlretrieve(audio_url, local_path)
-        print(f"Uploading (single) {safe_name}...")
-        scp_to_nas(local_path, safe_name)
+        try:
+            if not os.path.exists(local_path):
+                print(f"Downloading (single) {title}...")
+                urlretrieve(audio_url, local_path)
+            print(f"Uploading (single) {safe_name}...")
+            scp_to_nas(local_path, safe_name)
+        except Exception as ex:
+            print(f"  SKIPPED (likely still processing on MinusPod's side): {ex}")
+            continue
         pubdate_dt = parse_pubdate(pubdate_str)
         entries.append({"title": title, "filename": safe_name, "local_path": local_path, "pubdate_dt": pubdate_dt})
 

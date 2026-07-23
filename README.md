@@ -143,6 +143,14 @@ have to rediscover them:
   individually for each episode instead of the batch one - it triggers
   immediately and queues correctly behind whichever episode is already
   processing.
+- **`merge_multipart.py`/`sync_to_nas.py` will crash on a still-processing episode.**
+  MinusPod's feed lists an episode (with a URL) as soon as it's queued, before
+  the audio file actually exists - fetching it returns a `503` in the
+  meantime. Since auto-processing is continuous (new episodes keep arriving
+  and being queued), waiting for a perfectly quiet moment isn't reliable.
+  Both scripts now catch this per-episode/per-group and skip it with a
+  message instead of aborting the whole run - whatever wasn't ready this time
+  gets picked up on the next scheduled run.
 - **A shared Docker network namespace (`network_mode: container:X`) breaks
   silently on recreation.** Not a MinusPod-specific issue, but relevant if you
   run this alongside other containers sharing a VPN/network container: if you

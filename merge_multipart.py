@@ -107,8 +107,11 @@ def main():
         if os.path.exists(out_path):
             continue
         print(f"Fusion: '{base}' ({total} parties)")
-        with tempfile.TemporaryDirectory() as workdir:
-            merge_group(base, parts, workdir)
+        try:
+            with tempfile.TemporaryDirectory() as workdir:
+                merge_group(base, parts, workdir)
+        except Exception as ex:
+            print(f"  IGNORE (probablement encore en cours de traitement cote MinusPod): {ex}")
 
 
 if __name__ == "__main__":
