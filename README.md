@@ -1,4 +1,4 @@
-# MinusPod NAS companion
+# adfree-podcast-nas-sync
 
 A small pipeline that sits on top of [MinusPod](https://github.com/ttlequals0/MinusPod)
 (self-hosted ad removal for podcasts) and:
