@@ -37,6 +37,21 @@ storage/serving layer.
                                                               your devices
 ```
 
+### Alternative: one powerful NAS doing everything
+
+If your NAS has real CPU headroom (or a GPU) and enough RAM to run Whisper
+transcription and an LLM alongside its other duties, there's no hard
+requirement to split processing and storage - `docker-compose.cpu.yml` and
+`podcasts-api` can all run on the same box, and `sync_to_nas.py` becomes a
+local copy instead of an `scp` over LAN.
+
+This isn't the default setup documented here because the NAS this project was
+built on doesn't have that headroom - it's a modest NAS-class machine already
+running several other services (media library, download automation, parity
+checks...), and adding continuous Whisper/LLM workloads on top would compete
+with all of that for CPU and memory. If your NAS is beefier and mostly idle,
+consolidating everything onto it is a perfectly reasonable simplification.
+
 ## Setup
 
 1. **Run MinusPod** via `docker-compose.cpu.yml` (CPU-only; adjust if you have
